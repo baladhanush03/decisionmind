@@ -18,17 +18,3 @@ services:
       - key: SECRET_KEY
         generateValue: true
 
-  # Frontend Web App
-  - type: web
-    name: decisionmind-frontend
-    env: docker
-    dockerfilePath: ./frontend/Dockerfile
-    plan: free
-    envVars:
-      - key: VITE_API_URL
-        fromService:
-          type: web
-          name: decisionmind-backend
-          property: host
-        # Prepend https:// to the backend host
-        value: https://${VITE_API_URL}/api/v1
