@@ -22,10 +22,11 @@ class AutoMLService:
         os.makedirs(MODELS_DIR, exist_ok=True)
         
         # 1. Load Data
-        if dataset.file_path.endswith('.csv'):
-            df = pd.read_csv(dataset.file_path)
+        file_path = str(dataset.file_path)
+        if file_path.endswith('.csv'):
+            df = pd.read_csv(file_path) # type: ignore
         else:
-            df = pd.read_excel(dataset.file_path)
+            df = pd.read_excel(file_path) # type: ignore
             
         if target_column not in df.columns:
             raise ValueError(f"Target column '{target_column}' not found in dataset")
@@ -42,21 +43,21 @@ class AutoMLService:
             is_classification = True
             
         # 4. Preprocessing X
-        categorical_cols = X.select_dtypes(include=['object', 'category']).columns
-        numeric_cols = X.select_dtypes(include=['number']).columns
+        categorical_cols = X.select_dtypes(include=['object', 'category']).columns # type: ignore
+        numeric_cols = X.select_dtypes(include=['number']).columns # type: ignore
         
         le_dict = {}
         for col in categorical_cols:
             le = LabelEncoder()
-            X[col] = le.fit_transform(X[col].astype(str))
+            X[col] = le.fit_transform(X[col].astype(str)) # type: ignore
             le_dict[col] = le
             
         # Impute missing values
+        X_cols = X.columns
         imputer = None
         if not X.empty:
             imputer = SimpleImputer(strategy='mean')
-            X_cols = X.columns
-            X = pd.DataFrame(imputer.fit_transform(X), columns=X_cols)
+            X = pd.DataFrame(imputer.fit_transform(X), columns=X_cols) # type: ignore
             
         # Preprocessing Y if classification
         le_y = None
@@ -76,16 +77,16 @@ class AutoMLService:
             model = RandomForestClassifier(n_estimators=100, random_state=42)
             model.fit(X_train, y_train)
             preds = model.predict(X_test)
-            metrics['accuracy'] = round(accuracy_score(y_test, preds), 4)
-            metrics['f1_score'] = round(f1_score(y_test, preds, average='macro'), 4)
+            metrics['accuracy'] = round(accuracy_score(y_test, preds), 4) # type: ignore
+            metrics['f1_score'] = round(f1_score(y_test, preds, average='macro'), 4) # type: ignore
             algorithm_used = "Random Forest Classifier"
             feature_importances = model.feature_importances_
         else:
             model = RandomForestRegressor(n_estimators=100, random_state=42)
             model.fit(X_train, y_train)
             preds = model.predict(X_test)
-            metrics['r2_score'] = round(r2_score(y_test, preds), 4)
-            metrics['mse'] = round(mean_squared_error(y_test, preds), 4)
+            metrics['r2_score'] = round(r2_score(y_test, preds), 4) # type: ignore
+            metrics['mse'] = round(mean_squared_error(y_test, preds), 4) # type: ignore
             algorithm_used = "Random Forest Regressor"
             feature_importances = model.feature_importances_
             
@@ -99,7 +100,7 @@ class AutoMLService:
             "le_dict": le_dict,
             "le_y": le_y,
             "is_classification": is_classification,
-            "features": list(X_cols) if not X.empty else list(X.columns)
+            "features": list(X_cols)
         }
         joblib.dump(artifact, model_file_path)
             

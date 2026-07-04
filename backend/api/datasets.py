@@ -28,7 +28,7 @@ async def upload_dataset(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ) -> Any:
-    if not file.filename.endswith((".csv", ".xls", ".xlsx")):
+    if not file.filename or not file.filename.endswith((".csv", ".xls", ".xlsx")):
         raise HTTPException(status_code=400, detail="Only CSV and Excel files are supported")
         
     try:
@@ -71,10 +71,11 @@ def get_dataset_eda(
         raise HTTPException(status_code=404, detail="Dataset not found")
         
     try:
-        if dataset.filename.endswith(".csv"):
-            df = pd.read_csv(dataset.file_path)
+        file_path = str(dataset.file_path)
+        if str(dataset.filename).endswith(".csv"):
+            df = pd.read_csv(file_path) # type: ignore
         else:
-            df = pd.read_excel(dataset.file_path)
+            df = pd.read_excel(file_path) # type: ignore
             
         missing_values_json = EDAService.generate_missing_values_chart(df)
         correlation_json = EDAService.generate_correlation_heatmap(df)

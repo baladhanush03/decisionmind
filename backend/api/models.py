@@ -40,10 +40,11 @@ def get_dataset_columns(
         raise HTTPException(status_code=404, detail="Dataset not found")
         
     try:
-        if dataset.file_path.endswith('.csv'):
-            df = pd.read_csv(dataset.file_path, nrows=1)
+        file_path = str(dataset.file_path)
+        if file_path.endswith('.csv'):
+            df = pd.read_csv(file_path, nrows=1) # type: ignore
         else:
-            df = pd.read_excel(dataset.file_path, nrows=1)
+            df = pd.read_excel(file_path, nrows=1) # type: ignore
         return list(df.columns)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

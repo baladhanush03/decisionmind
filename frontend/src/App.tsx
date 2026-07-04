@@ -3,6 +3,7 @@ import Landing from './pages/Landing';
 import AuthLayout from './layouts/AuthLayout';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 import DashboardLayout from './layouts/DashboardLayout';
 import DashboardHome from './pages/DashboardHome';
 import Datasets from './pages/Datasets';
@@ -29,6 +30,10 @@ function App() {
           <Route 
             path="/register" 
             element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />} 
+          />
+          <Route 
+            path="/forgot-password" 
+            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <ForgotPassword />} 
           />
         </Route>
 

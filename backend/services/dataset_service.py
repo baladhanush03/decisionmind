@@ -14,16 +14,18 @@ class DatasetService:
         os.makedirs(UPLOAD_DIR, exist_ok=True)
         
         # Save file to disk
-        file_path = os.path.join(UPLOAD_DIR, f"{user_id}_{upload_file.filename}")
+        safe_filename = upload_file.filename or "unnamed.csv"
+        file_path = os.path.join(UPLOAD_DIR, f"{user_id}_{safe_filename}")
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(upload_file.file, buffer)
             
         # Analyze with pandas
         try:
-            if upload_file.filename.endswith(".csv"):
-                df = pd.read_csv(file_path)
-            elif upload_file.filename.endswith((".xls", ".xlsx")):
-                df = pd.read_excel(file_path)
+            filename = upload_file.filename or ""
+            if filename.endswith(".csv"):
+                df = pd.read_csv(file_path) # type: ignore
+            elif filename.endswith((".xls", ".xlsx")):
+                df = pd.read_excel(file_path) # type: ignore
             else:
                 raise ValueError("Unsupported file format")
                 
