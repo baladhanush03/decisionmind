@@ -1,20 +1,16 @@
 services:
-  # Backend API (FastAPI via Docker)
+  # Backend API — native Python runtime (faster deploys than Docker)
   - type: web
     name: decisionmind-backend
-    env: docker
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    env: python
+    rootDir: backend
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     plan: free
     envVars:
       - key: SECRET_KEY
-        generateValue: true
+        value: decisionmind_super_secret_key_render_2024
       - key: DATABASE_URL
         value: sqlite:///./decisionmind.db
-      - key: OPENAI_API_KEY
-        value: sk-placeholder-key-replace-with-real-key
-      - key: FRONTEND_URL
-        value: https://decisionmind.vercel.app
-
-  # Frontend (Static React App served via Vercel - just reference here for docs)
-  # The frontend is deployed separately to Vercel using the /frontend directory
+      - key: PYTHON_VERSION
+        value: 3.11.0

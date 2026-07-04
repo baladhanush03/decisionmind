@@ -16,13 +16,14 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configure CORS — open to all origins so frontend can reach backend
+# Configure CORS — allow all origins (dev + any Vercel deployment)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=False,   # Must be False when allow_origins=["*"]
-    allow_methods=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 from api.auth import router as auth_router
