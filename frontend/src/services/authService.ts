@@ -15,12 +15,18 @@ export const authService = {
     return response.data;
   },
   
-  register: async (email: string, password: string, fullName: string) => {
+  register: async (email: string, password: string, fullName: string, phoneNumber?: string) => {
     const response = await api.post('/auth/register', {
       email,
       password,
       full_name: fullName,
+      phone_number: phoneNumber || null,
     });
+    return response.data;
+  },
+
+  googleLogin: async (credential: string) => {
+    const response = await api.post('/auth/google', { credential });
     return response.data;
   },
 

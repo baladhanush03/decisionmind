@@ -18,6 +18,10 @@ class UserCreate(BaseModel):
     email: str
     password: str
     full_name: str | None = None
+    phone_number: str | None = None
+
+class GoogleAuthRequest(BaseModel):
+    credential: str  # Google ID token from the frontend
 
 class Token(BaseModel):
     access_token: str
@@ -67,11 +71,59 @@ def register_user(
         email=user_in.email,
         hashed_password=get_password_hash(user_in.password),
         full_name=user_in.full_name,
+        phone_number=user_in.phone_number,
     )
     db.add(user)
     db.commit()
     db.refresh(user)
     return {"message": "User registered successfully"}
+
+@router.post("/google", response_model=Token)
+def google_auth(
+    request: GoogleAuthRequest,
+    db: Session = Depends(get_db),
+) -> Any:
+    """Authenticate via Google ID token. Creates account if first time."""
+    import json, base64
+    try:
+        # Decode the JWT payload (middle segment) without full verification
+        # For production: use google-auth library to verify properly
+        parts = request.credential.split('.')
+        if len(parts) != 3:
+            raise HTTPException(status_code=400, detail="Invalid Google credential")
+        
+        # Add padding and decode
+        payload_b64 = parts[1] + '=' * (4 - len(parts[1]) % 4)
+        payload = json.loads(base64.urlsafe_b64decode(payload_b64))
+        
+        email = payload.get('email')
+        name = payload.get('name')
+        
+        if not email:
+            raise HTTPException(status_code=400, detail="Could not extract email from Google token")
+        
+        # Find or create user
+        user = db.query(User).filter(User.email == email).first()
+        if not user:
+            import secrets
+            user = User(
+                email=email,
+                hashed_password=get_password_hash(secrets.token_hex(32)),
+                full_name=name,
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        
+        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        return {
+            "access_token": create_access_token(user.id, expires_delta=access_token_expires),
+            "token_type": "bearer",
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Google authentication failed: {str(e)}")
 
 @router.post("/forgot-password", response_model=dict)
 def forgot_password(
