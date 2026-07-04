@@ -8,9 +8,9 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies (required for psycopg2, etc.)
+# Install minimal system dependencies (no libpq since we use SQLite)
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends gcc libpq-dev \
+    && apt-get install -y --no-install-recommends gcc \
     && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies
@@ -20,6 +20,9 @@ RUN pip install --upgrade pip \
 
 # Copy the rest of the application code
 COPY . .
+
+# Create directory for SQLite database persistence
+RUN mkdir -p /app/data
 
 # Expose port
 EXPOSE 8000

@@ -3,11 +3,12 @@ uvicorn==0.27.1
 pydantic==2.6.1
 pydantic-settings==2.1.0
 sqlalchemy==2.0.25
-psycopg2-binary==2.9.9
+# Use aiosqlite-compatible driver; psycopg2 only needed for PostgreSQL
 alembic==1.13.1
 python-jose[cryptography]==3.3.0
+# Pin bcrypt to 4.0.1 — passlib 1.7.4 requires bcrypt <4.1 but >=4.0
 passlib[bcrypt]==1.7.4
-bcrypt==3.2.2
+bcrypt==4.0.1
 python-multipart==0.0.9
 # Data Processing
 pandas==2.2.0
@@ -15,10 +16,8 @@ numpy==1.26.4
 # ML
 scikit-learn==1.4.0
 xgboost==2.0.3
-# Explainability
-# shap==0.44.1 # Removed temporarily due to C++ Build Tools requirement on Windows
 # Visualization
 plotly==5.18.0
-# LLM Integration (Assuming simple openai for start, can change to others)
+# LLM Integration
 openai==1.12.0
 python-dotenv==1.0.1
