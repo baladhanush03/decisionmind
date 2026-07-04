@@ -16,22 +16,11 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configure CORS — allow dev localhost + production frontend URLs
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
-allowed_origins = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
-    "https://decisionmind-grf2.vercel.app",       # Vercel production
-    "https://decisionmind.vercel.app",              # Vercel alias
-]
-if FRONTEND_URL and FRONTEND_URL not in allowed_origins:
-    allowed_origins.append(FRONTEND_URL)
-
+# Configure CORS — open to all origins so frontend can reach backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,   # Must be False when allow_origins=["*"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
