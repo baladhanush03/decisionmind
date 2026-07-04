@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, File, CheckCircle2, AlertCircle, BarChart2 } from 'lucide-react';
+import { Upload, File, AlertCircle, BarChart2 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { datasetService } from '../services/datasetService';
 import { Link } from 'react-router-dom';

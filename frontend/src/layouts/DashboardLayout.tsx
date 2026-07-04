@@ -1,11 +1,10 @@
-import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
+import { Outlet, Navigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { BarChart3, BrainCircuit, Database, FileText, Settings, LogOut, Activity } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 
 export default function DashboardLayout() {
   const { isAuthenticated, logout } = useAuthStore();
-  const location = useLocation();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { datasetService } from '../services/datasetService';
 import { automlService } from '../services/automlService';
-import { Play, Activity, Bot, ChevronRight, Check } from 'lucide-react';
+import { Play, Activity, Bot, Check } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { datasetService } from '../services/datasetService';
 import { automlService } from '../services/automlService';
-import { FileText, Printer, CheckCircle, BarChart } from 'lucide-react';
+import { FileText, Printer } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import Plot from 'react-plotly.js';
 

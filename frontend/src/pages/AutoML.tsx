@@ -13,12 +13,10 @@ export default function AutoML() {
   
   const [isTraining, setIsTraining] = useState(false);
   const [trainedModel, setTrainedModel] = useState<any>(null);
-  const [models, setModels] = useState<any[]>([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
     fetchDatasets();
-    fetchModels();
   }, []);
 
   const fetchDatasets = async () => {
@@ -30,14 +28,6 @@ export default function AutoML() {
     }
   };
 
-  const fetchModels = async () => {
-    try {
-      const data = await automlService.getModels();
-      setModels(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const handleDatasetSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = Number(e.target.value);
@@ -67,7 +57,6 @@ export default function AutoML() {
     try {
       const result = await automlService.trainModel(selectedDatasetId, targetColumn);
       setTrainedModel(result);
-      fetchModels();
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Training failed');
     } finally {
